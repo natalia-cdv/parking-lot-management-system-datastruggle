@@ -30,20 +30,17 @@ public class Estacionamiento {
     // Attributes / Data Structures
     // -------------------------
 
-    // TODO: declare Set<Espacio> generalDisponibles
-    // TODO: declare Set<Espacio> vipDisponibles
-    // TODO: declare Set<Espacio> electricosDisponibles
+    private Set<Espacio> generalDisponibles;
+    private Set<Espacio> vipDisponibles;
+    private Set<Espacio> electricosDisponibles;
 
-    // TODO: declare HashMap<String, Reservacion> reservacionesActivas
-    //       Key = tablilla del auto
+    private HashMap<String, Reservacion> reservacionesActivas; // Key: Tablilla
+    private LinkedList<Transaccion> historialTransacciones;
+    private Stack<Transaccion> undoStack;
 
-    // TODO: declare LinkedList<Transaccion> historialTransacciones
-
-    // TODO: declare Stack<Transaccion> undoStack
-
-    // TODO: declare Queue<Estudiante> generalWaitlist
-    // TODO: declare Queue<Estudiante> vipWaitlist
-    // TODO: declare Queue<Estudiante> electricosWaitlist
+    private Queue<Estudiante> generalWaitlist;
+    private Queue<Estudiante> vipWaitlist;
+    private Queue<Estudiante> electricosWaitlist;
 
     // -------------------------
     // Constructor
@@ -54,8 +51,19 @@ public class Estacionamiento {
      * Initializes all data structures and populates the available spaces sets.
      */
     public Estacionamiento() {
-        // TODO: initialize all Sets, HashMap, LinkedList, Stack, Queues
-        // TODO: call initEspacios() to populate the three Sets
+        generalDisponibles = new HashSet<>();
+        vipDisponibles = new HashSet<>();
+        electricosDisponibles = new HashSet<>();
+        
+        reservacionesActivas = new HashMap<>();
+        historialTransacciones = new LinkedList<>();
+        undoStack = new Stack<>();
+        
+        generalWaitlist = new LinkedList<>();
+        vipWaitlist = new LinkedList<>();
+        electricosWaitlist = new LinkedList<>();
+
+        initEspacios();
     }
 
     // -------------------------
@@ -89,15 +97,44 @@ public class Estacionamiento {
      * @return the created Reservacion, or null if unsuccessful
      * Called by: Main
      */
+
+
     public Reservacion hacerReservacion(Estudiante estudiante, String seccion,
                                         LocalDate fecha, int horaInicio,
                                         int duracion, List<String> servicios) {
-        // TODO: validate horaInicio and duracion
-        // TODO: check if student already has an active reservation
-        // TODO: check availability in the requested section (Set is not empty)
-        // TODO: if available: pick a space, build Reservacion, update HashMap, Set, push to Stack, add to LinkedList
-        // TODO: if full: prompt waitlist or show other sections
-        return null;
+    // Validar si ya tiene reservación activa
+        if (reservacionesActivas.containsKey(estudiante.getTablillaAuto())) {
+            System.out.println("Error: El vehículo ya tiene una reservación activa.");
+            return null;
+        }
+
+        //  Obtener el set de la sección correspondiente
+        Set<Espacio> disponibles = getSetPorSeccion(seccion);
+        
+        // Verificar disponibilidad
+        if (disponibles != null && !disponibles.isEmpty()) {
+            // Tomar el primer espacio disponible (iterador) y removerlo del Set
+            Espacio espacioAsignado = disponibles.iterator().next();
+            disponibles.remove(espacioAsignado);
+
+            // Crear la reservación (asumiendo que el constructor de Reservacion calcula el costo)
+            Reservacion nueva = new Reservacion(estudiante, espacioAsignado, fecha, horaInicio, duracion, servicios);
+            
+
+            // --- ACTUALIZAR ESTRUCTURAS ---
+            // Registrar en el HashMap por tablilla
+            reservacionesActivas.put(estudiante.getTablillaAuto(), nueva);
+            
+            // Registrar la transacción en el historial y el Stack para deshacer
+            Transaccion t = new Transaccion("RESERVAR", nueva);
+            historialTransacciones.add(t);
+            undoStack.push(t);
+
+            return nueva;
+        } else {
+            System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera?");
+            return null;
+        }
     }
 
     /**
@@ -210,24 +247,51 @@ public class Estacionamiento {
     }
 
     /**
-     * (e) Displays all reservations made by a specific student.
+     * Displays all reservations made by a specific student.
      *
      * @param numeroEstudiante  the student's ID number
      * Called by: Main
      */
     public void mostrarReservacionesPorEstudiante(String numeroEstudiante) {
-        // TODO: search LinkedList for reservations matching numeroEstudiante
-        // TODO: print all found, or "No reservations found"
+        // Imprime encabezado con el número de estudiante
+        System.out.println("--- Historial del Estudiante: " + numeroEstudiante + " ---");
+        boolean encontro = false;
+
+        // Itera sobre el historial de transacciones para encontrar las reservaciones del estudiante
+        for (Transaccion t : historialTransacciones) {
+            Reservacion r = t.getReservacion();
+
+            // Verifica si la transacción es de tipo RESERVAR o CAMBIAR y si el número de estudiante coincide
+            if (r.getEstudiante().getNumeroEstudiante().equals(numeroEstudiante)) {
+                // Imprime el tipo de transacción, fecha y espacio asignado
+                System.out.println(t.getTipo() + " | Fecha: " + r.getFecha() + " | Espacio: " + r.getEspacio().toString());
+                encontro = true;
+            }
+        }
+        
+        // Si no se encontraron reservaciones para el estudiante, imprime un mensaje indicando que no hay registros
+        if (!encontro) System.out.println("No se encontraron registros.");
     }
+    
 
     /**
-     * (f) Displays all transactions in the system.
+     * Displays all transactions in the system.
      * Called by: Main
      */
     public void mostrarTodasTransacciones() {
-        // TODO: iterate and print every Transaccion in historialTransacciones
-    }
+        if (historialTransacciones.isEmpty()) {
+            // Imprime mensaje si no hay transacciones registradas
+            System.out.println("No hay transacciones registradas.");
+            return;
+        }
+        
+        System.out.println("======= REPORTE GLOBAL DE TRANSACCIONES =======");
 
+        // Itera sobre el historial de transacciones e imprime cada una utilizando su método toString()
+        for (Transaccion t : historialTransacciones) {
+            System.out.println(t.toString());
+        }
+}
     // -------------------------
     // Helpers
     // -------------------------
