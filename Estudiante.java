@@ -65,7 +65,7 @@ public class Estudiante {
     }
 
     public String getTablilla() {
-    return tablilla;
+        return auto != null ? auto.toString() : null;
     }
 
     // toString() — readable summary for operator display
