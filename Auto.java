@@ -7,16 +7,62 @@
  */
 public class Auto {
 
-    // TODO: declare attributes
-    // - String tablilla
-    // - String marca
-    // - String modelo
-    // - int anio
+    // Auto attributes
+    private String tablilla;
+    private String marca;
+    private String modelo;
+    private int año;
 
-    // TODO: Constructor with all fields
+    // Constructor with all fields
+    public Auto(String tablilla, String marca, String modelo, int año) {
+        this.tablilla = tablilla;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.año = año;
+    }
 
-    // TODO: Getters and setters for each attribute
+    // Getters and setters for each attribute
+    public String getTablilla() {
+        return tablilla;
+    }
 
-    // TODO: toString() — should return something readable for the operator display
+    public void setTablilla(String tablilla) {
+        this.tablilla = tablilla;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getModelo() {
+        return modelo;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public int getAño() {
+        return año;
+    }
+
+    public void setAño(int año) {
+        this.año = año;
+    }
+
+    @Override
+    public String toString() {
+        return "Auto{" +
+                "tablilla='" + tablilla + '\'' +
+                ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
+                ", año=" + año +
+                '}';
+    }
+    
 
 }
