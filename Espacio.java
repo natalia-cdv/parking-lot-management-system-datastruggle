@@ -10,24 +10,94 @@
  */
 public class Espacio {
 
-    // TODO: declare attributes
-    // - int numeroFila
-    // - int numeroEspacio
-    // - String seccion   ("General", "VIP", "Electrico")
-    // - boolean disponible
+// Espacio Attributes
 
-    // TODO: Constructor with all fields
+    private int numeroFila;
+    private int numeroEspacio;
+    private String seccion;
+    private boolean disponible;
 
-    // TODO: Getters and setters for each attribute
+    // Constructor with all fields
+    public Espacio(int numFila, int numEspacio, String seccion, boolean disponible){
+        this.numeroFila = numFila;
+        this.numeroEspacio = numEspacio;
+        this.seccion = seccion;
+        this.disponible = disponible;
+    }
 
-    // TODO: toString()
+    // Getters and setters for each attribute
 
-    // TODO: equals(Object o)
-    // Two espacios are equal if they have the same seccion + fila + numero
-    // This is required for the HashSet to work correctly
+    public int getNumeroFila(){
+        return numeroFila;
+    }
+
+    public void setNumeroFila(int numFila){
+        this.numeroFila = numFila;
+    }
+
+    public int getNumeroEspacio(){
+        return numeroEspacio;
+    }
+
+    public void setNumeroEspacio(int numEspacio){
+        this.numeroEspacio = numEspacio;
+    }
+
+    public String getSeccion(){
+        return seccion;
+    }
+
+    public void setSeccion(String seccion){
+        this.seccion = seccion;
+    }
+
+    public boolean isDisponible(){
+        return disponible;
+    }
+
+    public void setDisponible(boolean disponible){
+        this.disponible = disponible;
+    }
+
+
+
+     @Override
+    public String toString() {
+        return "Espacio{" +
+                "numeroFila=" + numeroFila + 
+                ", numeroEspacio=" + numeroEspacio + 
+                ", seccion='" + seccion + '\'' +
+                ", disponible=" + disponible + 
+                '}';
+    }
+
+//    Compares two Espacios to see if they're Equal
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o){
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Espacio espacio = (Espacio) o;
+
+        return numeroFila == espacio.numeroFila &&
+        numeroEspacio == espacio.numeroEspacio &&
+        java.util.Objects.equals(seccion, espacio.seccion);
+
+
+        
+    }
 
     // TODO: hashCode()
     // Must be consistent with equals()
     // Hint: use Objects.hash(numeroFila, numeroEspacio, seccion)
+
+    @Override
+    public int hashCode(){
+        return java.util.Objects.hash(numeroFila, numeroEspacio, seccion);
+    }
 
 }
