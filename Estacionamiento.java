@@ -104,7 +104,7 @@ public class Estacionamiento {
                 return electricosDisponibles;
 
             default:
-                throw null;
+                throw new IllegalArgumentException ("Sección invalida: " + seccion); 
         }
     }
 
@@ -182,7 +182,19 @@ public class Estacionamiento {
 
             return nueva;
         } else {
-            System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera?");
+            Scanner sc = new Scanner(System.in); 
+            System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera? (s/n)");
+            String WLresponse = sc.nextLine();
+            
+            if (WLresponse.equalsIgnoreCase("s")){
+                agregarAWaitlist(estudiante, seccion);
+                System.out.println("Añadido a la lista de espera");
+
+            } else{
+                System.out.println("No se añadió a la lista de espera.");
+
+            }
+            
             return null;
         }
     }
@@ -201,7 +213,40 @@ public class Estacionamiento {
         // TODO: remove from HashMap, return space to Set
         // TODO: log Transaccion to LinkedList, push to Stack
         // TODO: check waitlist Queue — if not empty, poll() and call hacerReservacion for them
-        return false;
+
+        if (reservacionesActivas.containsKey(tablilla)){
+           Reservacion r = reservacionesActivas.get(tablilla);
+           marcarDisponible(r.getEspacio());
+           reservacionesActivas.remove(tablilla);  
+
+           System.out.println("Cargo por cancelación: $10.");  
+           Transaccion t = new Transaccion("CANCELAR", r, java.time.LocalDateTime.now(), 10.0);
+
+           historialTransacciones.add(t);
+           undoStack.push(t);
+
+
+
+           String s = r.getEspacio().getSeccion();
+           Queue<Estudiante> q = getWaitlistPorSeccion(s);
+
+            if (!q.isEmpty()){
+            Estudiante next = q.poll();
+
+            System.out.println("Asignando espacio a siguiente en waitlist: " + next.getNumeroEstudiante());
+
+            Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+
+            reservacionesActivas.put(next.getTablillaAuto(), nueva);
+
+            historialTransacciones.add(new Transaccion("RESERVAR", nueva, java.time.LocalDateTime.now(), 0.0));
+            }
+
+        } else{
+            System.out.println("Reservación no existe.");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -218,7 +263,47 @@ public class Estacionamiento {
         // TODO: free old space, assign new space, update HashMap
         // TODO: recalculate cost difference + $6 fee
         // TODO: log Transaccion, push to Stack
-        return false;
+        
+        Reservacion r = reservacionesActivas.get(tablilla);
+        Set<Espacio> nuevoSet = getSetPorSeccion(nuevaSeccion);
+
+        if (r == null){
+            System.out.println("No existe reservación.");
+            return false;
+        }
+
+        if (nuevoSet.isEmpty()){
+            System.out.println("NO hay espacios en la sección: " + nuevaSeccion);
+            return false;
+        }
+        
+        Espacio nuevoEspacio = nuevoSet.iterator().next();
+        nuevoSet.remove(nuevoEspacio);
+        marcarDisponible(r.getEspacio());
+        marcarOcupado(nuevoEspacio);
+
+        double costoAnterior = r.getCostoTotal();
+        double nuevoCosto = costoAnterior + 6.0;
+
+        System.err.println("Cambio de sección. Cargo adicional: $6");
+
+        Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+
+
+        nueva.setSeccion(nuevaSeccion);
+        nueva.setCostoTotal(nuevoCosto);
+
+        reservacionesActivas.remove(tablilla);
+        reservacionesActivas.put(tablilla, nueva);
+
+        Transaccion t = new Transaccion("CAMBIAR", nueva, java.time.LocalDateTime.now(), 6.0);
+
+        historialTransacciones.add(t);
+        undoStack.push(t);
+
+               
+
+        return true;
     }
 
     /**
@@ -245,6 +330,24 @@ public class Estacionamiento {
      */
     public void agregarAWaitlist(Estudiante estudiante, String seccion) {
         // TODO: enqueue into the correct Queue based on seccion
+
+        switch (seccion) {
+            case "General" :
+                generalWaitlist.offer(estudiante);
+                break;
+            case "VIP" : 
+                vipWaitlist.offer(estudiante);
+                break;
+            case "Electrico" :
+                electricosWaitlist.offer(estudiante);
+                break;
+            default:
+                throw new IllegalArgumentException("Sección Invalida: " + seccion);
+        }
+
+
+
+
     }
 
     // -------------------------
@@ -341,7 +444,81 @@ public class Estacionamiento {
         for (Transaccion t : historialTransacciones) {
             System.out.println(t.toString());
         }
+    
 }
+
+    public void mostrarWaitlist(String seccion){
+        Queue<Estudiante> waitlist = getWaitlistPorSeccion(seccion);
+
+        if (waitlist.isEmpty()){
+            System.out.println("No hay estudiantes en espera.");
+        }
+
+        for (Estudiante e : waitlist){
+            System.out.println(e);
+        }
+        
+        
+    }
+
+    public void showAllReservationsWeek() {
+
+    if (reservacionesActivas.isEmpty()) {
+        System.out.println("No hay reservaciones.");
+        return;
+    }
+
+    System.out.println("=== RESERVACIONES DE LA SEMANA ===");
+
+    for (Reservacion r : reservacionesActivas.values()) {
+
+        LocalDate fecha = r.getFecha();
+
+       
+        if (fecha.getDayOfWeek().getValue() >= 1 &&
+            fecha.getDayOfWeek().getValue() <= 5) {
+
+            System.out.println(
+                fecha.getDayOfWeek() + " | " +
+                r.getHoraInicio() + " | " +
+                r.getEspacio()
+            );
+        }
+    }
+}
+
+public void showReservationsOver2Hours(LocalDate date) {
+
+    List<Reservacion> lista = new ArrayList<>();
+
+    for (Reservacion r : reservacionesActivas.values()) {
+
+        if (r.getFecha().equals(date) && r.getDuracion() > 2) {
+            lista.add(r);
+        }
+    }
+
+    if (lista.isEmpty()) {
+        System.out.println("No hay reservaciones de más de 2 horas.");
+        return;
+    }
+
+   
+    lista.sort(Comparator.comparingInt(Reservacion::getHoraInicio));
+
+    System.out.println("=== RESERVACIONES > 2 HORAS ===");
+
+    for (Reservacion r : lista) {
+        System.out.println(
+            "Hora: " + r.getHoraInicio() +
+            " | Duración: " + r.getDuracion() +
+            " | Espacio: " + r.getEspacio()
+        );
+    }
+}
+
+
+
     // -------------------------
     // Helpers
     // -------------------------
@@ -367,7 +544,20 @@ public class Estacionamiento {
      */
     private Queue<Estudiante> getWaitlistPorSeccion(String seccion) {
         // TODO: return the matching Queue
-        return null;
+        
+        switch (seccion) {
+            case "General" :
+               return generalWaitlist;
+                
+            case "VIP" : 
+                return vipWaitlist;
+                
+            case "Electrico" :
+                return electricosWaitlist;
+            default:
+                throw new IllegalArgumentException("Sección Invalida: " + seccion);
+        
+        }
     }
 
 }
