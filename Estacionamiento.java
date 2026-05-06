@@ -213,7 +213,40 @@ public class Estacionamiento {
         // TODO: remove from HashMap, return space to Set
         // TODO: log Transaccion to LinkedList, push to Stack
         // TODO: check waitlist Queue — if not empty, poll() and call hacerReservacion for them
-        return false;
+
+        if (reservacionesActivas.containsKey(tablilla)){
+           Reservacion r = reservacionesActivas.get(tablilla);
+           marcarDisponible(r.getEspacio());
+           reservacionesActivas.remove(tablilla);  
+
+           System.out.println("Cargo por cancelación: $10.");  
+           Transaccion t = new Transaccion("CANCELAR", r, java.time.LocalDateTime.now(), 10.0);
+
+           historialTransacciones.add(t);
+           undoStack.push(t);
+
+
+
+           String s = r.getEspacio().getSeccion();
+           Queue<Estudiante> q = getWaitlistPorSeccion(s);
+
+            if (!q.isEmpty()){
+            Estudiante next = q.poll();
+
+            System.out.println("Asignando espacio a siguiente en waitlist: " + next.getNumeroEstudiante());
+
+            Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+
+            reservacionesActivas.put(next.getTablillaAuto(), nueva);
+
+            historialTransacciones.add(new Transaccion("RESERVAR", nueva, java.time.LocalDateTime.now(), 0.0));
+            }
+
+        } else{
+            System.out.println("Reservación no existe.");
+            return false;
+        }
+        return true;
     }
 
     /**
