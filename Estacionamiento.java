@@ -263,7 +263,47 @@ public class Estacionamiento {
         // TODO: free old space, assign new space, update HashMap
         // TODO: recalculate cost difference + $6 fee
         // TODO: log Transaccion, push to Stack
-        return false;
+        
+        Reservacion r = reservacionesActivas.get(tablilla);
+        Set<Espacio> nuevoSet = getSetPorSeccion(nuevaSeccion);
+
+        if (r == null){
+            System.out.println("No existe reservación.");
+            return false;
+        }
+
+        if (nuevoSet.isEmpty()){
+            System.out.println("NO hay espacios en la sección: " + nuevaSeccion);
+            return false;
+        }
+        
+        Espacio nuevoEspacio = nuevoSet.iterator().next();
+        nuevoSet.remove(nuevoEspacio);
+        marcarDisponible(r.getEspacio());
+        marcarOcupado(nuevoEspacio);
+
+        double costoAnterior = r.getCostoTotal();
+        double nuevoCosto = costoAnterior + 6.0;
+
+        System.err.println("Cambio de sección. Cargo adicional: $6");
+
+        Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+
+
+        nueva.setSeccion(nuevaSeccion);
+        nueva.setCostoTotal(nuevoCosto);
+
+        reservacionesActivas.remove(tablilla);
+        reservacionesActivas.put(tablilla, nueva);
+
+        Transaccion t = new Transaccion("CAMBIAR", nueva, java.time.LocalDateTime.now(), 6.0);
+
+        historialTransacciones.add(t);
+        undoStack.push(t);
+
+               
+
+        return true;
     }
 
     /**
