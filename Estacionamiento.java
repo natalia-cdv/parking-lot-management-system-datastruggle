@@ -457,10 +457,68 @@ public class Estacionamiento {
         for (Estudiante e : waitlist){
             System.out.println(e);
         }
-       
-
+        
         
     }
+
+    public void showAllReservationsWeek() {
+
+    if (reservacionesActivas.isEmpty()) {
+        System.out.println("No hay reservaciones.");
+        return;
+    }
+
+    System.out.println("=== RESERVACIONES DE LA SEMANA ===");
+
+    for (Reservacion r : reservacionesActivas.values()) {
+
+        LocalDate fecha = r.getFecha();
+
+       
+        if (fecha.getDayOfWeek().getValue() >= 1 &&
+            fecha.getDayOfWeek().getValue() <= 5) {
+
+            System.out.println(
+                fecha.getDayOfWeek() + " | " +
+                r.getHoraInicio() + " | " +
+                r.getEspacio()
+            );
+        }
+    }
+}
+
+public void showReservationsOver2Hours(LocalDate date) {
+
+    List<Reservacion> lista = new ArrayList<>();
+
+    for (Reservacion r : reservacionesActivas.values()) {
+
+        if (r.getFecha().equals(date) && r.getDuracion() > 2) {
+            lista.add(r);
+        }
+    }
+
+    if (lista.isEmpty()) {
+        System.out.println("No hay reservaciones de más de 2 horas.");
+        return;
+    }
+
+   
+    lista.sort(Comparator.comparingInt(Reservacion::getHoraInicio));
+
+    System.out.println("=== RESERVACIONES > 2 HORAS ===");
+
+    for (Reservacion r : lista) {
+        System.out.println(
+            "Hora: " + r.getHoraInicio() +
+            " | Duración: " + r.getDuracion() +
+            " | Espacio: " + r.getEspacio()
+        );
+    }
+}
+
+
+
     // -------------------------
     // Helpers
     // -------------------------
