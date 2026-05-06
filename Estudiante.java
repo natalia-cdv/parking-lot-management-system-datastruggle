@@ -7,7 +7,6 @@
  */
 public class Estudiante {
 
-<<<<<<< HEAD
     // Attributes
     private String nombre;
     private String numeroEstudiante;
@@ -80,19 +79,5 @@ public class Estudiante {
                 ", auto=" + auto +
                 '}';
     }
-=======
-    // TODO: declare attributes
-    // - String nombre
-    // - String numeroEstudiante
-    // - String email
-    // - String telefono
-    // - Auto auto  (the car linked to this student)
-
-    // TODO: Constructor with all fields
-
-    // TODO: Getters and setters for each attribute
-
-    // TODO: toString() — readable summary for operator display
->>>>>>> upstream/main
 
 }

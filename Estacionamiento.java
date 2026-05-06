@@ -76,7 +76,57 @@ public class Estacionamiento {
      * Called by: constructor
      */
     private void initEspacios() {
-        // TODO: loop and add Espacio objects to each Set
+       for (int i=0; i < 100; i++){
+        generalDisponibles.add(new Espacio(1, i, "General", true));
+
+       }
+
+       for (int i=0; i < 50; i++){
+        vipDisponibles.add(new Espacio(1, i, "VIP", true));
+       }
+
+       for (int i=0; i < 50; i++){
+        electricosDisponibles.add(new Espacio(1, i, "Electrico", true));
+       }
+       
+
+    }
+
+    public Set<Espacio> getDisponibles(String seccion){
+        switch (seccion) {
+            case "General":
+                return generalDisponibles;
+
+            case "VIP":
+                return vipDisponibles;
+
+            case "Electrico":
+                return electricosDisponibles;
+
+            default:
+                throw null;
+        }
+    }
+
+    public void marcarOcupado(Espacio e){
+
+        Set<Espacio> set = getDisponibles(e.getSeccion());
+
+        if (set != null){
+            set.remove(e);
+            e.setDisponible(false );
+        }
+
+    }
+
+    public void marcarDisponible (Espacio e){
+        Set<Espacio> set = getDisponibles(e.getSeccion());
+
+        if (set != null){
+            set.add(e);
+            e.setDisponible(true);
+        }
+
     }
 
     // -------------------------
