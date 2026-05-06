@@ -104,7 +104,7 @@ public class Estacionamiento {
                 return electricosDisponibles;
 
             default:
-                throw null;
+                throw new IllegalArgumentException ("Sección invalida: " + seccion); 
         }
     }
 
@@ -182,7 +182,19 @@ public class Estacionamiento {
 
             return nueva;
         } else {
-            System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera?");
+            Scanner sc = new Scanner(System.in); 
+            System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera? (s/n)");
+            String WLresponse = sc.nextLine();
+            
+            if (WLresponse.equalsIgnoreCase("s")){
+                agregarAWaitlist(estudiante, seccion);
+                System.out.println("Añadido a la lista de espera");
+
+            } else{
+                System.out.println("No se añadió a la lista de espera.");
+
+            }
+            
             return null;
         }
     }
@@ -245,6 +257,24 @@ public class Estacionamiento {
      */
     public void agregarAWaitlist(Estudiante estudiante, String seccion) {
         // TODO: enqueue into the correct Queue based on seccion
+
+        switch (seccion) {
+            case "General" :
+                generalWaitlist.offer(estudiante);
+                break;
+            case "VIP" : 
+                vipWaitlist.offer(estudiante);
+                break;
+            case "Electrico" :
+                electricosWaitlist.offer(estudiante);
+                break;
+            default:
+                throw new IllegalArgumentException("Sección Invalida: " + seccion);
+        }
+
+
+
+
     }
 
     // -------------------------
@@ -341,7 +371,23 @@ public class Estacionamiento {
         for (Transaccion t : historialTransacciones) {
             System.out.println(t.toString());
         }
+    
 }
+
+    public void mostrarWaitlist(String seccion){
+        Queue<Estudiante> waitlist = getWaitlistPorSeccion(seccion);
+
+        if (waitlist.isEmpty()){
+            System.out.println("No hay estudiantes en espera.");
+        }
+
+        for (Estudiante e : waitlist){
+            System.out.println(e);
+        }
+       
+
+        
+    }
     // -------------------------
     // Helpers
     // -------------------------
@@ -367,7 +413,20 @@ public class Estacionamiento {
      */
     private Queue<Estudiante> getWaitlistPorSeccion(String seccion) {
         // TODO: return the matching Queue
-        return null;
+        
+        switch (seccion) {
+            case "General" :
+               return generalWaitlist;
+                
+            case "VIP" : 
+                return vipWaitlist;
+                
+            case "Electrico" :
+                return electricosWaitlist;
+            default:
+                throw new IllegalArgumentException("Sección Invalida: " + seccion);
+        
+        }
     }
 
 }
