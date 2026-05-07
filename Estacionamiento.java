@@ -314,6 +314,7 @@ public class Estacionamiento {
 
         if(undoStack.isEmpty()) {
             System.out.println("No hay acciones que deshacer.");
+            return;
         }
 
         Transaccion ultima = undoStack.pop();
@@ -334,6 +335,31 @@ public class Estacionamiento {
             Set<Espacio> disponibles = getSetPorSeccion(reserva.getSeccion());
             disponibles.remove(reserva.getEspacio());
             System.out.println("Cancelación deshecha.");
+        }
+
+        else if(ultima.getTipo().equals("CAMBIAR")) {
+            String tablilla = reserva.getEstudiante().getTablillaAuto();
+            Reservacion reservaAnterior = null;
+            for (int i = historialTransacciones.size() - 1; i >= 0; i--) {
+                Transaccion t = historialTransacciones.get(i);
+                if ((t.getTipo().equals("RESERVAR") || t.getTipo().equals("CAMBIAR"))
+                        && t.getReservacion().getEstudiante().getTablillaAuto().equals(tablilla)
+                        && t.getReservacion() != reserva) {
+                    reservaAnterior = t.getReservacion();
+                    break;
+                }
+            }
+            if (reservaAnterior != null) {
+                // Liberar el espacio nuevo
+                marcarDisponible(reserva.getEspacio());
+                // Ocupar el espacio anterior
+                marcarOcupado(reservaAnterior.getEspacio());
+                // Restaurar la reservacion anterior en el mapa
+                reservacionesActivas.put(tablilla, reservaAnterior);
+                System.out.println("Cambio de seccion deshecho.");
+            } else {
+                System.out.println("No se pudo deshacer el cambio: historial insuficiente.");
+            }
         }
         historialTransacciones.add(new Transaccion("DESHACER", reserva, LocalDateTime.now(), reserva.getCostoTotal()));
 
