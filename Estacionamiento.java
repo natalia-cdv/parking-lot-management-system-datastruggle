@@ -227,10 +227,12 @@ public class Estacionamiento {
             System.out.println("Asignando espacio a siguiente en waitlist: " + next.getNumeroEstudiante());
 
             Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), r.getSeccion());
+            
+            nueva.calcularCosto();
 
             reservacionesActivas.put(next.getTablillaAuto(), nueva);
 
-            historialTransacciones.add(new Transaccion("RESERVAR", nueva, java.time.LocalDateTime.now(), 0.0));
+            historialTransacciones.add(new Transaccion("RESERVAR", nueva, java.time.LocalDateTime.now(), nueva.getCostoTotal()));
             }
 
         } else{
@@ -276,9 +278,13 @@ public class Estacionamiento {
         double costoAnterior = r.getCostoTotal();
         double nuevoCosto = costoAnterior + 6.0;
 
-        System.err.println("Cambio de sección. Cargo adicional: $6");
-
         Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), nuevaSeccion);
+
+        nueva.calcularCosto();
+        nueva.setCostoTotal(nueva.getCostoTotal() + 6.0);
+        System.out.println("Cambio de sección. Cargo adicional: $6");
+        System.out.println("Nuevo costo total: $" + String.format("%.2f", nueva.getCostoTotal()));
+
 
 
         nueva.setSeccion(nuevaSeccion);
@@ -441,7 +447,8 @@ public class Estacionamiento {
 
         List<Reservacion> resultados = new ArrayList<>();
         for(Reservacion reserva : reservacionesActivas.values()) {
-            if(reserva.getFecha().isEqual(desde) || reserva.getFecha().isAfter(desde) && reserva.getFecha().isEqual(hasta) || reserva.getFecha().isEqual(hasta)) {
+            LocalDate f = reserva.getFecha();
+            if((f.isEqual(desde) || f.isAfter(desde)) && (f.isEqual(hasta) || f.isBefore(hasta))) {
                 resultados.add(reserva);
             }
         }

@@ -118,8 +118,8 @@ public class Reservacion {
                      if(servicio.toLowerCase().equals("fluidos")) {
                         costoServicios += 2;
                     }
-                    if(servicio.toLowerCase().equals("liquidos")) {
-                        costoServicios += 10;
+                    if(servicio.toLowerCase().equals("frenos")) {
+                        costoServicios += 5;
                     }
                 }
             }
