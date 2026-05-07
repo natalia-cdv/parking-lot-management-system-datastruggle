@@ -1,5 +1,5 @@
-import java.util.*;
 import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Main.java
@@ -107,15 +107,35 @@ public class Main {
                     break;
 
                 case "2":
-                    // TODO: JEZER
+                    printDivider();
+                    System.out.println(">>> CANCELAR RESERVACION");
+                    System.out.print("Tablilla del vehiculo: ");
+                    String tablillaCancel = scanner.nextLine();
+                    boolean cancelado = estacionamiento.cancelarReservacion(tablillaCancel);
+                    if (cancelado) {
+                        System.out.println("Reservacion cancelada exitosamente.");
+                    } else {
+                        System.out.println("No se encontro reservacion para esa tablilla.");
+                    }
                     break;
 
                 case "3":
-                    // TODO: JEZER
+                    printDivider();
+                    System.out.println(">>> CAMBIAR SECCION");
+                    System.out.print("Tablilla del vehiculo: ");
+                    String tablillaCambio = scanner.nextLine();
+                    System.out.print("Nueva seccion (General / VIP / Electrico): ");
+                    String nuevaSeccion = scanner.nextLine();
+                    boolean cambiado = estacionamiento.cambiarEstacionamiento(tablillaCambio, nuevaSeccion);
+                    if (cambiado) {
+                        System.out.println("Seccion cambiada exitosamente.");
+                    } else {
+                        System.out.println("No se pudo cambiar la seccion.");
+                    }
                     break;
 
                 case "4":
-                    // TODO: AIDHAN
+                    estacionamiento.deshacerUltimaAccion();
                     break;
 
                 case "5":
