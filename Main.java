@@ -42,19 +42,19 @@ public class Main {
                     String seccion = scanner.nextLine();
 
                     System.out.println("Fecha de reservacion:");
-                    System.out.print("  Anio (YYYY): ");
-                    int rAnio = Integer.parseInt(scanner.nextLine());
+                    System.out.print("  Año (YYYY): ");
+                    int rAnio = leerEntero(scanner, "  Año (YYYY): ");
                     System.out.print("  Mes (1-12): ");
-                    int rMes = Integer.parseInt(scanner.nextLine());
+                    int rMes = leerEntero(scanner, "  Mes (1-12): ");
                     System.out.print("  Dia (1-31): ");
-                    int rDia = Integer.parseInt(scanner.nextLine());
+                    int rDia = leerEntero(scanner, "  Dia (1-31): ");
                     LocalDate fecha = LocalDate.of(rAnio, rMes, rDia);
 
                     System.out.print("Hora de inicio (7-17): ");
-                    int horaInicio = Integer.parseInt(scanner.nextLine());
+                    int horaInicio = leerEntero(scanner, "  Hora de inicio (7-17): ");
 
                     System.out.print("Duracion en horas (1-8): ");
-                    int duracion = Integer.parseInt(scanner.nextLine());
+                    int duracion = leerEntero(scanner, "  Duracion en horas (1-8): ");
 
                     // Validaciones
                     if (horaInicio < 7 || horaInicio > 17) {
@@ -151,6 +151,7 @@ public class Main {
         System.out.println("e. Reservaciones de un estudiante");
         System.out.println("f. Todas las transacciones");
         System.out.print("Seleccione una opcion: ");
+        System.out.println("0. Volver al menu principal");
         String opcion = scanner.nextLine();
 
         switch (opcion) {
@@ -161,35 +162,35 @@ public class Main {
             case "b":
                 // TODO: JEZER
                 System.out.print("Dia (1-31): ");
-                int dia = Integer.parseInt(scanner.nextLine());
+                int dia  = leerEntero(scanner, "Dia (1-31): ");
                 System.out.print("Mes (1-12): ");
-                int mes = Integer.parseInt(scanner.nextLine());
+                int mes = leerEntero(scanner, "Mes (1-12): ");
                 System.out.print("Anio (YYYY): ");
-                int anio = Integer.parseInt(scanner.nextLine());
+                int anio = leerEntero(scanner, "Anio (YYYY): ");
                 estacionamiento.mostrarReservacionesMasDe2Horas(LocalDate.of(anio, mes, dia));
                 break;
             case "c":
                 // TODO: AIDHAN
                 System.out.print("Costo minimo: $");
-                double min = Double.parseDouble(scanner.nextLine());
+                double min = leerDouble(scanner, "Costo minimo: $");
                 System.out.print("Costo maximo: $");
-                double max = Double.parseDouble(scanner.nextLine());
+                double max = leerDouble(scanner, "Costo maximo: $");
                 estacionamiento.mostrarReservacionesPorCosto(min, max);
                 break;
             case "d":
                 // TODO: AIDHAN
                 System.out.print("Fecha inicio - Dia: ");
-                int d1 = Integer.parseInt(scanner.nextLine());
+                int d1 = leerEntero(scanner, "Fecha inicio - Dia: ");
                 System.out.print("Fecha inicio - Mes: ");
-                int m1 = Integer.parseInt(scanner.nextLine());
+                int m1 = leerEntero(scanner, "Fecha inicio - Mes: ");
                 System.out.print("Fecha inicio - Anio: ");
-                int a1 = Integer.parseInt(scanner.nextLine());
+                int a1 = leerEntero(scanner, "Fecha inicio - Anio: ");
                 System.out.print("Fecha fin - Dia: ");
-                int d2 = Integer.parseInt(scanner.nextLine());
+                int d2 = leerEntero(scanner, "Fecha fin - Dia: ");
                 System.out.print("Fecha fin - Mes: ");
-                int m2 = Integer.parseInt(scanner.nextLine());
+                int m2 = leerEntero(scanner, "Fecha fin - Mes: ");
                 System.out.print("Fecha fin - Anio: ");
-                int a2 = Integer.parseInt(scanner.nextLine());
+                int a2 = leerEntero(scanner, "Fecha fin - Anio: ");
                 estacionamiento.mostrarReservacionesPorPeriodo(LocalDate.of(a1, m1, d1), LocalDate.of(a2, m2, d2));
                 break;
             case "e":
@@ -199,6 +200,9 @@ public class Main {
                 break;
             case "f":
                 estacionamiento.mostrarTodasTransacciones();
+                break;
+            case "0":
+                System.out.println("Volviendo al menu principal...");
                 break;
             default:
                 System.out.println("Opcion no valida.");
@@ -232,11 +236,34 @@ public class Main {
         String marca = scanner.nextLine();
         System.out.print("Modelo: ");
         String modelo = scanner.nextLine();
-        System.out.print("Anio: ");
-        int anio = Integer.parseInt(scanner.nextLine());
+        System.out.print("Año: ");
+        int anio = leerEntero(scanner, "Año (YYYY): ");
 
         Auto nuevoAuto = new Auto(tablilla, marca, modelo, anio);
         return new Estudiante(nombre, id, email, tel, nuevoAuto);
+    }
+
+
+    private static int leerEntero(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Por favor ingrese un numero entero.");
+            }
+        }
+    }
+
+    private static double leerDouble(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Por favor ingrese un numero.");
+            }
+        }
     }
 
     /**
