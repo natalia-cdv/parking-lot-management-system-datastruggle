@@ -94,7 +94,7 @@ public class Main {
 
                     // 4. Procesar reservacion
                     Reservacion resultado = estacionamiento.hacerReservacion(
-                        estudiante, seccion, fecha, horaInicio, duracion, servicios
+                        estudiante, seccion, fecha, horaInicio, duracion, servicios, scanner
                     );
 
                     printDivider();
