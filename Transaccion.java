@@ -10,18 +10,44 @@ import java.time.LocalDateTime;
  * Called by: Estacionamiento (every modifying action creates one)
  * Calls: Nothing (plain model)
  */
+// Class: Transaccion
 public class Transaccion {
 
-    // TODO: declare attributes
-    // - String tipo              ("RESERVAR", "CANCELAR", "CAMBIAR", "DESHACER")
-    // - Reservacion reservacion  (the reservation this transaction refers to)
-    // - LocalDateTime timestamp  (when the action happened)
-    // - double monto             (amount charged or refunded)
+    private String tipo; // "RESERVAR", "CANCELAR", "CAMBIAR", "DESHACER"
+    private Reservacion reservacion;
+    private LocalDateTime timestamp;
+    private double monto;
 
-    // TODO: Constructor with all fields
+    // Constructor
+    public Transaccion(String tipo, Reservacion reservacion, LocalDateTime timestamp, double monto) {
+        this.tipo = tipo;
+        this.reservacion = reservacion;
+        this.timestamp = timestamp;
+        this.monto = monto;
+    }
+    
+    // Getters 
+    public String getTipo() {
+        return tipo;
+    }
+    public Reservacion getReservacion() {
+        return reservacion;
+    }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    public double getMonto() {
+        return monto;
+    }
 
-    // TODO: Getters
-
-    // TODO: toString() — readable log entry for display option (f)
-
+// Returns a readable string with all the "Transaccion" attributes.
+    @Override
+    public String toString() {
+        return "Transaccion{" +
+                "tipo='" + tipo + '\'' +
+                ", reservacion=" + reservacion +
+                ", timestamp=" + timestamp +
+                ", monto=$" + String.format("%.2f", monto) +
+                '}';
+    }
 }

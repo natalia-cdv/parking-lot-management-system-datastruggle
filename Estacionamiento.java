@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -168,7 +169,7 @@ public class Estacionamiento {
             disponibles.remove(espacioAsignado);
 
             // Crear la reservación (asumiendo que el constructor de Reservacion calcula el costo)
-            Reservacion nueva = new Reservacion(estudiante, espacioAsignado, fecha, horaInicio, duracion, servicios);
+            Reservacion nueva = new Reservacion(estudiante, espacio, fecha, horaInicio, duracion, servicios);
             
 
             // --- ACTUALIZAR ESTRUCTURAS ---
@@ -311,10 +312,32 @@ public class Estacionamiento {
      * Called by: Main
      */
     public void deshacerUltimaAccion() {
-        // TODO: check if Stack is empty — if so, print message and return
-        // TODO: pop from Stack
-        // TODO: reverse the action based on Transaccion.tipo
-        // TODO: log the undo as a new Transaccion in LinkedList
+
+        if(undoStack.isEmpty()) {
+            System.out.println("No hay acciones que deshacer.");
+        }
+
+        Transaccion ultima = undoStack.pop();
+        Reservacion reserva = ultima.getReservacion();
+
+        if(ultima.getTipo().equals("RESERVAR")) {
+            reservacionesActivas.remove(reserva.getEstudiante().getTablillaAuto());
+        
+            Set<Espacio> disponibles = getSetPorSeccion(reserva.getSeccion());
+            disponibles.add(reserva.getEspacio());
+
+            System.out.println("Reservación deshecha.");
+        }
+
+        else if(ultima.getTipo().equals("CANCELAR")) {
+            reservacionesActivas.put(reserva.getEstudiante().getTablillaAuto(), reserva);
+
+            Set<Espacio> disponibles = getSetPorSeccion(reserva.getSeccion());
+            disponibles.remove(reserva.getEspacio());
+            System.out.println("Cancelación deshecha.");
+        }
+        historialTransacciones.add(new Transaccion("DESHACER", reserva, LocalDateTime.now(), reserva.getCostoTotal()));
+
     }
 
     // -------------------------
@@ -382,10 +405,23 @@ public class Estacionamiento {
      * @param max  maximum cost (inclusive)
      * Called by: Main
      */
+    // Displays all reservations within a specific total cost range.
     public void mostrarReservacionesPorCosto(double min, double max) {
-        // TODO: iterate and filter where costoTotal >= min && <= max
-        // TODO: print results or "No reservations found"
+
+        boolean result = false;
+
+        for(Reservacion reserva : reservacionesActivas.values()) {
+           if(reserva.getCostoTotal() >= min && reserva.getCostoTotal() <= max) {
+            System.out.println(reserva);
+            result = true;
+           }
+        }
+        if(result = false) {
+            System.out.println("No hay reservaciones.");
+        }
     }
+
+    
 
     /**
      * (d) Displays reservations within a date range.
@@ -394,9 +430,47 @@ public class Estacionamiento {
      * @param hasta  end date (inclusive)
      * Called by: Main
      */
+
+
+    // Displays all reservations made within a specific time period.
     public void mostrarReservacionesPorPeriodo(LocalDate desde, LocalDate hasta) {
-        // TODO: filter where fecha is between desde and hasta
-        // TODO: print sorted by date then horaInicio
+
+        List<Reservacion> resultados = new ArrayList<>();
+        for(Reservacion reserva : reservacionesActivas.values()) {
+            if(reserva.getFecha().isEqual(desde) || reserva.getFecha().isAfter(desde) && reserva.getFecha().isEqual(hasta) || reserva.getFecha().isEqual(hasta)) {
+                resultados.add(reserva);
+            }
+        }
+
+        for (int i = 0; i < resultados.size() - 1; i++) {
+            for (int j = i + 1; j < resultados.size(); j++) {
+            Reservacion reserva1 = resultados.get(i);
+            Reservacion reserva2 = resultados.get(j);
+            
+                if (reserva1.getFecha().isAfter(reserva2.getFecha())) {
+                    Reservacion temp = resultados.get(i);
+                    resultados.set(i, resultados.get(j));
+                    resultados.set(j, temp);
+                    
+                } else if (reserva1.getFecha().isEqual(reserva2.getFecha())) {
+
+                    if (reserva1.getHoraInicio() > reserva2.getHoraInicio()) {
+                        Reservacion temp = resultados.get(i);
+                        resultados.set(i, resultados.get(j));
+                        resultados.set(j, temp);
+                    }
+                }
+            }
+        }
+
+       if(resultados.isEmpty()) {
+        System.out.println("No hay reservaciones.");
+       } else {
+        for(Reservacion reserva : resultados) {
+            System.out.println(reserva);
+        }
+       }
+     
     }
 
     /**
@@ -560,4 +634,7 @@ public void showReservationsOver2Hours(LocalDate date) {
         }
     }
 
+    public LinkedList<Transaccion> getAllTransacciones() {
+        return historialTransacciones;
+    }
 }
