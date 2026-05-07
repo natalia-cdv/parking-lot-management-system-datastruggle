@@ -152,7 +152,7 @@ public class Estacionamiento {
 
     public Reservacion hacerReservacion(Estudiante estudiante, String seccion,
                                         LocalDate fecha, int horaInicio,
-                                        int duracion, List<String> servicios) {
+                                        int duracion, List<String> servicios, Scanner scanner) {
     // Validar si ya tiene reservación activa
         if (reservacionesActivas.containsKey(estudiante.getTablillaAuto())) {
             System.out.println("Error: El vehículo ya tiene una reservación activa.");
@@ -169,23 +169,22 @@ public class Estacionamiento {
             disponibles.remove(espacioAsignado);
 
             // Crear la reservación (asumiendo que el constructor de Reservacion calcula el costo)
-            Reservacion nueva = new Reservacion(estudiante, espacio, fecha, horaInicio, duracion, servicios);
-            
+            Reservacion nueva = new Reservacion(estudiante, espacioAsignado, fecha, horaInicio, duracion, 0, servicios, seccion);
+            nueva.calcularCosto(); // esto actualiza costoTotal internamente
 
             // --- ACTUALIZAR ESTRUCTURAS ---
             // Registrar en el HashMap por tablilla
             reservacionesActivas.put(estudiante.getTablillaAuto(), nueva);
             
             // Registrar la transacción en el historial y el Stack para deshacer
-            Transaccion t = new Transaccion("RESERVAR", nueva);
+            Transaccion t = new Transaccion("RESERVAR", nueva, java.time.LocalDateTime.now(), nueva.getCostoTotal());
             historialTransacciones.add(t);
             undoStack.push(t);
 
             return nueva;
         } else {
-            Scanner sc = new Scanner(System.in); 
             System.out.println("Sección " + seccion + " llena. ¿Desea entrar a la lista de espera? (s/n)");
-            String WLresponse = sc.nextLine();
+            String WLresponse = scanner.nextLine();
             
             if (WLresponse.equalsIgnoreCase("s")){
                 agregarAWaitlist(estudiante, seccion);
@@ -236,7 +235,7 @@ public class Estacionamiento {
 
             System.out.println("Asignando espacio a siguiente en waitlist: " + next.getNumeroEstudiante());
 
-            Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+            Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), r.getSeccion());
 
             reservacionesActivas.put(next.getTablillaAuto(), nueva);
 
@@ -288,7 +287,7 @@ public class Estacionamiento {
 
         System.err.println("Cambio de sección. Cargo adicional: $6");
 
-        Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), r.getServiciosAdicionales());
+        Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), nuevaSeccion);
 
 
         nueva.setSeccion(nuevaSeccion);
@@ -385,6 +384,8 @@ public class Estacionamiento {
         // TODO: iterate historialTransacciones
         // TODO: filter only RESERVAR type within this week
         // TODO: group and print by day
+        
+            showAllReservationsWeek();
     }
 
     /**
@@ -396,6 +397,8 @@ public class Estacionamiento {
     public void mostrarReservacionesMasDe2Horas(LocalDate fecha) {
         // TODO: filter reservaciones where fecha matches and duracion > 2
         // TODO: print sorted by horaInicio
+
+            showReservationsOver2Hours(fecha);
     }
 
     /**
@@ -416,7 +419,7 @@ public class Estacionamiento {
             result = true;
            }
         }
-        if(result = false) {
+        if(result == false) {
             System.out.println("No hay reservaciones.");
         }
     }
@@ -605,8 +608,7 @@ public void showReservationsOver2Hours(LocalDate date) {
      * Called by: hacerReservacion, cambiarEstacionamiento
      */
     private Set<Espacio> getSetPorSeccion(String seccion) {
-        // TODO: return the matching Set based on seccion string
-        return null;
+        return getDisponibles(seccion);
     }
 
     /**
