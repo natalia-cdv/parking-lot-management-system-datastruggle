@@ -94,19 +94,10 @@ public class Estacionamiento {
     }
 
     public Set<Espacio> getDisponibles(String seccion){
-        switch (seccion) {
-            case "General":
-                return generalDisponibles;
-
-            case "VIP":
-                return vipDisponibles;
-
-            case "Electrico":
-                return electricosDisponibles;
-
-            default:
-                throw new IllegalArgumentException ("Sección invalida: " + seccion); 
-        }
+        if (seccion.equalsIgnoreCase("General"))   return generalDisponibles;
+        if (seccion.equalsIgnoreCase("VIP"))        return vipDisponibles;
+        if (seccion.equalsIgnoreCase("Electrico")) return electricosDisponibles;
+        throw new IllegalArgumentException("Seccion invalida: " + seccion);
     }
 
     public void marcarOcupado(Espacio e){
@@ -301,8 +292,7 @@ public class Estacionamiento {
         historialTransacciones.add(t);
         undoStack.push(t);
 
-               
-
+            
         return true;
     }
 
@@ -377,25 +367,10 @@ public class Estacionamiento {
      * Called by: hacerReservacion (when section is full)
      */
     public void agregarAWaitlist(Estudiante estudiante, String seccion) {
-        // TODO: enqueue into the correct Queue based on seccion
-
-        switch (seccion) {
-            case "General" :
-                generalWaitlist.offer(estudiante);
-                break;
-            case "VIP" : 
-                vipWaitlist.offer(estudiante);
-                break;
-            case "Electrico" :
-                electricosWaitlist.offer(estudiante);
-                break;
-            default:
-                throw new IllegalArgumentException("Sección Invalida: " + seccion);
-        }
-
-
-
-
+        if (seccion.equalsIgnoreCase("General"))   { generalWaitlist.offer(estudiante); return; }
+        if (seccion.equalsIgnoreCase("VIP"))        { vipWaitlist.offer(estudiante);     return; }
+        if (seccion.equalsIgnoreCase("Electrico")) { electricosWaitlist.offer(estudiante); return; }
+        throw new IllegalArgumentException("Seccion invalida: " + seccion);
     }
 
     // -------------------------
@@ -645,21 +620,10 @@ public void showReservationsOver2Hours(LocalDate date) {
      * Called by: agregarAWaitlist, cancelarReservacion
      */
     private Queue<Estudiante> getWaitlistPorSeccion(String seccion) {
-        // TODO: return the matching Queue
-        
-        switch (seccion) {
-            case "General" :
-               return generalWaitlist;
-                
-            case "VIP" : 
-                return vipWaitlist;
-                
-            case "Electrico" :
-                return electricosWaitlist;
-            default:
-                throw new IllegalArgumentException("Sección Invalida: " + seccion);
-        
-        }
+        if (seccion.equalsIgnoreCase("General"))   return generalWaitlist;
+        if (seccion.equalsIgnoreCase("VIP"))        return vipWaitlist;
+        if (seccion.equalsIgnoreCase("Electrico")) return electricosWaitlist;
+        throw new IllegalArgumentException("Seccion invalida: " + seccion);
     }
 
     public LinkedList<Transaccion> getAllTransacciones() {
