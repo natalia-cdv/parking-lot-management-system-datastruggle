@@ -38,23 +38,24 @@ public class Main {
                     // 2. Pedir detalles de la reservacion
                     printDivider();
                     System.out.println(">>> DETALLES DE LA RESERVACION");
-                    System.out.print("Seccion (General / VIP / Electrico): ");
-                    String seccion = scanner.nextLine();
+                    
+                    String seccion = "";
+                    while (true) {
+                        System.out.print("Seccion (General / VIP / Electrico): ");
+                        seccion = scanner.nextLine().trim();
+                        if (seccion.equalsIgnoreCase("General") || seccion.equalsIgnoreCase("VIP") || seccion.equalsIgnoreCase("Electrico")) break;
+                        System.out.println("Error: Sección inválida. Escriba: General, VIP o Electrico.");
+                    }
 
                     System.out.println("Fecha de reservacion:");
-                    System.out.print("  Año (YYYY): ");
-                    int rAnio = leerEntero(scanner, "  Año (YYYY): ");
-                    System.out.print("  Mes (1-12): ");
-                    int rMes = leerEntero(scanner, "  Mes (1-12): ");
-                    System.out.print("  Dia (1-31): ");
-                    int rDia = leerEntero(scanner, "  Dia (1-31): ");
+                    int rAnio = leerEntero(scanner, "  Año (2026-2027): ", 2026, 2027);
+                    int rMes = leerEntero(scanner, "  Mes (1-12): ", 1, 12);
+                    int rDia = leerEntero(scanner, "  Dia (1-31): ", 1, 31);
                     LocalDate fecha = LocalDate.of(rAnio, rMes, rDia);
 
-                    System.out.print("Hora de inicio (7-17): ");
-                    int horaInicio = leerEntero(scanner, "  Hora de inicio (7-17): ");
+                    int horaInicio = leerEntero(scanner, "Hora de inicio (7-17): ", 7, 17);
+                    int duracion = leerEntero(scanner, "Duracion en horas (1-8): ", 1, 8);
 
-                    System.out.print("Duracion en horas (1-8): ");
-                    int duracion = leerEntero(scanner, "  Duracion en horas (1-8): ");
 
                     // Validaciones
                     if (horaInicio < 7 || horaInicio > 17) {
@@ -182,35 +183,35 @@ public class Main {
             case "b":
                 // TODO: JEZER
                 System.out.print("Dia (1-31): ");
-                int dia  = leerEntero(scanner, "Dia (1-31): ");
+                int dia  = leerEntero(scanner, "Dia (1-31): " , 1, 31);
                 System.out.print("Mes (1-12): ");
-                int mes = leerEntero(scanner, "Mes (1-12): ");
+                int mes = leerEntero(scanner, "Mes (1-12): ", 1, 12);
                 System.out.print("Anio (YYYY): ");
-                int anio = leerEntero(scanner, "Anio (YYYY): ");
+                int anio = leerEntero(scanner, "Año (YYYY): ", 2026, 2999);
                 estacionamiento.mostrarReservacionesMasDe2Horas(LocalDate.of(anio, mes, dia));
                 break;
             case "c":
                 // TODO: AIDHAN
                 System.out.print("Costo minimo: $");
-                double min = leerDouble(scanner, "Costo minimo: $");
+                double min = leerDouble(scanner, "Costo minimo: $", 0, Double.MAX_VALUE);
                 System.out.print("Costo maximo: $");
-                double max = leerDouble(scanner, "Costo maximo: $");
+                double max = leerDouble(scanner, "Costo maximo: $", min, Double.MAX_VALUE);
                 estacionamiento.mostrarReservacionesPorCosto(min, max);
                 break;
             case "d":
                 // TODO: AIDHAN
                 System.out.print("Fecha inicio - Dia: ");
-                int d1 = leerEntero(scanner, "Fecha inicio - Dia: ");
+                int d1 = leerEntero(scanner, "Fecha inicio - Dia: ", 1, 31);
                 System.out.print("Fecha inicio - Mes: ");
-                int m1 = leerEntero(scanner, "Fecha inicio - Mes: ");
+                int m1 = leerEntero(scanner, "Fecha inicio - Mes: ", 1, 12);
                 System.out.print("Fecha inicio - Anio: ");
-                int a1 = leerEntero(scanner, "Fecha inicio - Anio: ");
+                int a1 = leerEntero(scanner, "Fecha inicio - Año: ", 2026, 2999);
                 System.out.print("Fecha fin - Dia: ");
-                int d2 = leerEntero(scanner, "Fecha fin - Dia: ");
+                int d2 = leerEntero(scanner, "Fecha fin - Dia: ", 1, 31);
                 System.out.print("Fecha fin - Mes: ");
-                int m2 = leerEntero(scanner, "Fecha fin - Mes: ");
+                int m2 = leerEntero(scanner, "Fecha fin - Mes: ", 1, 12);
                 System.out.print("Fecha fin - Anio: ");
-                int a2 = leerEntero(scanner, "Fecha fin - Anio: ");
+                int a2 = leerEntero(scanner, "Fecha fin - Año: ", 2026, 2999);
                 estacionamiento.mostrarReservacionesPorPeriodo(LocalDate.of(a1, m1, d1), LocalDate.of(a2, m2, d2));
                 break;
             case "e":
@@ -239,47 +240,93 @@ public class Main {
     private static Estudiante recopilarInfoEstudiante(Scanner scanner) {
         printDivider();
         System.out.println(">>> INFORMACION DEL ESTUDIANTE");
-        System.out.print("Nombre completo: ");
-        String nombre = scanner.nextLine();
+        
+        String nombre;
+        while (true) {
+            System.out.print("Nombre completo: ");
+            nombre = scanner.nextLine().trim();
+            if (nombre.length() >= 3 && nombre.matches("^[a-zA-Z\\s]+$")) break;
+            System.out.println("Error: Nombre inválido (mínimo 3 letras, sin números).");
+        }
+
         System.out.print("Numero de Estudiante: ");
-        String id = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Telefono: ");
-        String tel = scanner.nextLine();
+        String id = scanner.nextLine().trim();
+
+        String email;
+        while (true) {
+            System.out.print("Email: ");
+            email = scanner.nextLine().trim();
+            if (email.contains("@") && email.contains(".")) break;
+            System.out.println("Error: Formato de email inválido (ejemplo@upr.edu).");
+        }
+
+        String tel;
+        while (true) {
+            System.out.print("Telefono: ");
+            tel = scanner.nextLine().trim();
+            // Cuenta los dígitos para asegurar que haya al menos 10
+            if (tel.replaceAll("\\D", "").length() >= 10) break;
+            System.out.println("Error: El teléfono debe tener al menos 10 dígitos numéricos.");
+        }
 
         printDivider();
         System.out.println(">>> INFORMACION DEL AUTO");
-        System.out.print("Tablilla: ");
-        String tablilla = scanner.nextLine();
-        System.out.print("Marca: ");
-        String marca = scanner.nextLine();
-        System.out.print("Modelo: ");
-        String modelo = scanner.nextLine();
-        System.out.print("Año: ");
-        int anio = leerEntero(scanner, "Año (YYYY): ");
+
+        String tablilla;
+        while (true) {
+            System.out.print("Tablilla: ");
+            tablilla = scanner.nextLine().trim().toUpperCase();
+            if (tablilla.matches("^[A-Z]{3}.*")) break;
+            System.out.println("Error: La tablilla debe comenzar con al menos 3 letras (ej. ABC-1234 o ABC).");
+        }
+
+        String marca;
+            while (true) {
+                System.out.print("Marca: ");
+                marca = scanner.nextLine().trim();
+                if (marca.length() >= 3 && marca.matches("^[a-zA-Z\\s]+$")) break;
+                System.out.println("Error: La marca debe ser solo letras (min. 3).");
+            }
+
+            // 5. MODELO: Solo letras, min 3
+            String modelo;
+            while (true) {
+                System.out.print("Modelo: ");
+                modelo = scanner.nextLine().trim();
+                if (modelo.length() >= 3 && modelo.matches("^[a-zA-Z0-9\\s]+$")) break;
+                System.out.println("Error: El modelo debe tener al menos 3 letras o números.");
+            }
+        int anio = leerEntero(scanner, "Año (YYYY): ", 1886, 2026);
 
         Auto nuevoAuto = new Auto(tablilla, marca, modelo, anio);
         return new Estudiante(nombre, id, email, tel, nuevoAuto);
     }
 
 
-    private static int leerEntero(Scanner scanner, String prompt) {
+    private static int leerEntero(Scanner scanner, String prompt, int min, int max) {
         while (true) {
-            System.out.print(prompt);
             try {
-                return Integer.parseInt(scanner.nextLine().trim());
+                System.out.print(prompt);
+                int valor = Integer.parseInt(scanner.nextLine().trim());
+                if (valor >= min && valor <= max) {
+                    return valor;
+                }
+                System.out.println("Error: El valor debe estar entre " + min + " y " + max + ".");
             } catch (NumberFormatException e) {
                 System.out.println("Entrada invalida. Por favor ingrese un numero entero.");
             }
         }
     }
 
-    private static double leerDouble(Scanner scanner, String prompt) {
+    private static double leerDouble(Scanner scanner, String prompt, double min, double max) {
         while (true) {
-            System.out.print(prompt);
             try {
-                return Double.parseDouble(scanner.nextLine().trim());
+                System.out.print(prompt);
+                double valor = Double.parseDouble(scanner.nextLine().trim());
+                if (valor >= min && valor <= max) {
+                    return valor;
+                }
+                System.out.println("Error: El valor debe estar entre " + min + " y " + max + ".");
             } catch (NumberFormatException e) {
                 System.out.println("Entrada invalida. Por favor ingrese un numero.");
             }
