@@ -51,7 +51,16 @@ public class Main {
                     int rAnio = leerEntero(scanner, "  Año (2026-2027): ", 2026, 2027);
                     int rMes = leerEntero(scanner, "  Mes (1-12): ", 1, 12);
                     int rDia = leerEntero(scanner, "  Dia (1-31): ", 1, 31);
-                    LocalDate fecha = LocalDate.of(rAnio, rMes, rDia);
+                    LocalDate fecha = null;
+                    while (fecha == null) {
+                        try {
+                            fecha = LocalDate.of(rAnio, rMes, rDia);
+                        } catch (Exception e) {
+                            System.out.println("Fecha invalida (ese mes no tiene ese dia). Intente de nuevo.");
+                            rMes = leerEntero(scanner, "  Mes (1-12): ", 1, 12);
+                            rDia = leerEntero(scanner, "  Dia (1-31): ", 1, 31);
+                        }
+                    }
 
                     int horaInicio = leerEntero(scanner, "Hora de inicio (7-17): ", 7, 17);
                     int duracion = leerEntero(scanner, "Duracion en horas (1-8): ", 1, 8);
@@ -171,8 +180,8 @@ public class Main {
         System.out.println("d. Reservaciones por periodo de tiempo");
         System.out.println("e. Reservaciones de un estudiante");
         System.out.println("f. Todas las transacciones");
-        System.out.print("Seleccione una opcion: ");
         System.out.println("0. Volver al menu principal");
+        System.out.print("Seleccione una opcion: ");
         String opcion = scanner.nextLine();
 
         switch (opcion) {
@@ -182,37 +191,56 @@ public class Main {
                 break;
             case "b":
                 // TODO: JEZER
-                System.out.print("Dia (1-31): ");
                 int dia  = leerEntero(scanner, "Dia (1-31): " , 1, 31);
-                System.out.print("Mes (1-12): ");
                 int mes = leerEntero(scanner, "Mes (1-12): ", 1, 12);
-                System.out.print("Anio (YYYY): ");
                 int anio = leerEntero(scanner, "Año (YYYY): ", 2026, 2999);
-                estacionamiento.mostrarReservacionesMasDe2Horas(LocalDate.of(anio, mes, dia));
+                LocalDate fechaConsulta = null;
+                while (fechaConsulta == null) {
+                    try {
+                        fechaConsulta = LocalDate.of(anio, mes, dia);
+                    } catch (Exception e) {
+                        System.out.println("Fecha invalida. Intente de nuevo.");
+                        mes = leerEntero(scanner, "Mes (1-12): ", 1, 12);
+                        dia = leerEntero(scanner, "Dia (1-31): ", 1, 31);
+                    }
+                }
+                estacionamiento.mostrarReservacionesMasDe2Horas(fechaConsulta);
                 break;
             case "c":
                 // TODO: AIDHAN
-                System.out.print("Costo minimo: $");
                 double min = leerDouble(scanner, "Costo minimo: $", 0, Double.MAX_VALUE);
-                System.out.print("Costo maximo: $");
                 double max = leerDouble(scanner, "Costo maximo: $", min, Double.MAX_VALUE);
                 estacionamiento.mostrarReservacionesPorCosto(min, max);
                 break;
             case "d":
                 // TODO: AIDHAN
-                System.out.print("Fecha inicio - Dia: ");
                 int d1 = leerEntero(scanner, "Fecha inicio - Dia: ", 1, 31);
-                System.out.print("Fecha inicio - Mes: ");
                 int m1 = leerEntero(scanner, "Fecha inicio - Mes: ", 1, 12);
-                System.out.print("Fecha inicio - Anio: ");
                 int a1 = leerEntero(scanner, "Fecha inicio - Año: ", 2026, 2999);
-                System.out.print("Fecha fin - Dia: ");
                 int d2 = leerEntero(scanner, "Fecha fin - Dia: ", 1, 31);
-                System.out.print("Fecha fin - Mes: ");
                 int m2 = leerEntero(scanner, "Fecha fin - Mes: ", 1, 12);
-                System.out.print("Fecha fin - Anio: ");
                 int a2 = leerEntero(scanner, "Fecha fin - Año: ", 2026, 2999);
-                estacionamiento.mostrarReservacionesPorPeriodo(LocalDate.of(a1, m1, d1), LocalDate.of(a2, m2, d2));
+                LocalDate fechaInicio = null;
+                while (fechaInicio == null) {
+                    try {
+                        fechaInicio = LocalDate.of(a1, m1, d1);
+                    } catch (Exception e) {
+                        System.out.println("Fecha inicio invalida. Intente de nuevo.");
+                        m1 = leerEntero(scanner, "Fecha inicio - Mes: ", 1, 12);
+                        d1 = leerEntero(scanner, "Fecha inicio - Dia: ", 1, 31);
+                    }
+                }
+                LocalDate fechaFin = null;
+                while (fechaFin == null) {
+                    try {
+                        fechaFin = LocalDate.of(a2, m2, d2);
+                    } catch (Exception e) {
+                        System.out.println("Fecha fin invalida. Intente de nuevo.");
+                        m2 = leerEntero(scanner, "Fecha fin - Mes: ", 1, 12);
+                        d2 = leerEntero(scanner, "Fecha fin - Dia: ", 1, 31);
+                    }
+                }
+                estacionamiento.mostrarReservacionesPorPeriodo(fechaInicio, fechaFin);
                 break;
             case "e":
                 System.out.print("Numero de estudiante: ");
