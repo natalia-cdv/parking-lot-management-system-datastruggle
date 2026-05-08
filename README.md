@@ -138,7 +138,7 @@ The system validates all operator input before processing. Specifically:
 - **Phone:** Minimum 10 digits
 - **License plate (tablilla):** Must start with at least 3 letters
 - **Car make/brand:** Letters only, minimum 3 characters
-- - **Car Year:** Between 1886 and 2026
+- **Car Year:** Between 1886 and 2026
 - **Section:** Must be exactly `General`, `VIP`, or `Electrico` (case-insensitive)
 - **Year:** Between 2026 and 2999
 - **Month:** Between 1 and 12
