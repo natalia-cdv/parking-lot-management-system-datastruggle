@@ -275,20 +275,12 @@ public class Estacionamiento {
         marcarDisponible(r.getEspacio());
         marcarOcupado(nuevoEspacio);
 
-        double costoAnterior = r.getCostoTotal();
-        double nuevoCosto = costoAnterior + 6.0;
-
         Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), nuevaSeccion);
 
         nueva.calcularCosto();
         nueva.setCostoTotal(nueva.getCostoTotal() + 6.0);
         System.out.println("Cambio de sección. Cargo adicional: $6");
         System.out.println("Nuevo costo total: $" + String.format("%.2f", nueva.getCostoTotal()));
-
-
-
-        nueva.setSeccion(nuevaSeccion);
-        nueva.setCostoTotal(nuevoCosto);
 
         reservacionesActivas.remove(tablilla);
         reservacionesActivas.put(tablilla, nueva);
@@ -548,59 +540,65 @@ public class Estacionamiento {
 
     public void showAllReservationsWeek() {
 
-    if (reservacionesActivas.isEmpty()) {
-        System.out.println("No hay reservaciones.");
-        return;
+        if (reservacionesActivas.isEmpty()) {
+            System.out.println("No hay reservaciones.");
+            return;
+        }
+        
+        LocalDate hoy = LocalDate.now();
+        LocalDate inicioSemana = hoy.with(java.time.DayOfWeek.MONDAY);
+        LocalDate finSemana = hoy.with(java.time.DayOfWeek.FRIDAY);
+
+        System.out.println("=== RESERVACIONES DE LA SEMANA (" + inicioSemana + " al " + finSemana + ") ===");
+
+        boolean hayAlguna = false;
+        for (Reservacion r : reservacionesActivas.values()) {
+            LocalDate fecha = r.getFecha();
+
+            if (!fecha.isBefore(inicioSemana) && !fecha.isAfter(finSemana)) {
+                System.out.println(
+                    fecha.getDayOfWeek() + " " + fecha + " | Hora: " + r.getHoraInicio() +
+                    " | Seccion: " + r.getSeccion() +
+                    " | Espacio: " + r.getEspacio()
+                );
+                hayAlguna = true;
+            }
+        }
+
+        if (!hayAlguna) {
+            System.out.println("No hay reservaciones para esta semana.");
+        }
     }
 
-    System.out.println("=== RESERVACIONES DE LA SEMANA ===");
+    public void showReservationsOver2Hours(LocalDate date) {
 
-    for (Reservacion r : reservacionesActivas.values()) {
+        List<Reservacion> lista = new ArrayList<>();
 
-        LocalDate fecha = r.getFecha();
+        for (Reservacion r : reservacionesActivas.values()) {
 
-       
-        if (fecha.getDayOfWeek().getValue() >= 1 &&
-            fecha.getDayOfWeek().getValue() <= 5) {
+            if (r.getFecha().equals(date) && r.getDuracion() > 2) {
+                lista.add(r);
+            }
+        }
 
+        if (lista.isEmpty()) {
+            System.out.println("No hay reservaciones de más de 2 horas.");
+            return;
+        }
+
+    
+        lista.sort(Comparator.comparingInt(Reservacion::getHoraInicio));
+
+        System.out.println("=== RESERVACIONES > 2 HORAS ===");
+
+        for (Reservacion r : lista) {
             System.out.println(
-                fecha.getDayOfWeek() + " | " +
-                r.getHoraInicio() + " | " +
-                r.getEspacio()
+                "Hora: " + r.getHoraInicio() +
+                " | Duración: " + r.getDuracion() +
+                " | Espacio: " + r.getEspacio()
             );
         }
     }
-}
-
-public void showReservationsOver2Hours(LocalDate date) {
-
-    List<Reservacion> lista = new ArrayList<>();
-
-    for (Reservacion r : reservacionesActivas.values()) {
-
-        if (r.getFecha().equals(date) && r.getDuracion() > 2) {
-            lista.add(r);
-        }
-    }
-
-    if (lista.isEmpty()) {
-        System.out.println("No hay reservaciones de más de 2 horas.");
-        return;
-    }
-
-   
-    lista.sort(Comparator.comparingInt(Reservacion::getHoraInicio));
-
-    System.out.println("=== RESERVACIONES > 2 HORAS ===");
-
-    for (Reservacion r : lista) {
-        System.out.println(
-            "Hora: " + r.getHoraInicio() +
-            " | Duración: " + r.getDuracion() +
-            " | Espacio: " + r.getEspacio()
-        );
-    }
-}
 
 
 
