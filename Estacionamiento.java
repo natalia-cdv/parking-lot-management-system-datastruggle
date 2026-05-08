@@ -199,12 +199,7 @@ public class Estacionamiento {
      * Called by: Main
      */
     public boolean cancelarReservacion(String tablilla) {
-        // TODO: look up in HashMap
-        // TODO: if not found: print message, return false
-        // TODO: remove from HashMap, return space to Set
-        // TODO: log Transaccion to LinkedList, push to Stack
-        // TODO: check waitlist Queue — if not empty, poll() and call hacerReservacion for them
-
+       
         if (reservacionesActivas.containsKey(tablilla)){
            Reservacion r = reservacionesActivas.get(tablilla);
            marcarDisponible(r.getEspacio());
@@ -251,12 +246,7 @@ public class Estacionamiento {
      * Called by: Main
      */
     public boolean cambiarEstacionamiento(String tablilla, String nuevaSeccion) {
-        // TODO: find current reservation via HashMap
-        // TODO: check availability in nuevaSeccion
-        // TODO: free old space, assign new space, update HashMap
-        // TODO: recalculate cost difference + $6 fee
-        // TODO: log Transaccion, push to Stack
-        
+       
         Reservacion r = reservacionesActivas.get(tablilla);
         Set<Espacio> nuevoSet = getSetPorSeccion(nuevaSeccion);
 
@@ -380,10 +370,7 @@ public class Estacionamiento {
      * Called by: Main
      */
     public void mostrarTodasReservacionesSemana() {
-        // TODO: iterate historialTransacciones
-        // TODO: filter only RESERVAR type within this week
-        // TODO: group and print by day
-        
+       
             showAllReservationsWeek();
     }
 
@@ -394,9 +381,7 @@ public class Estacionamiento {
      * Called by: Main
      */
     public void mostrarReservacionesMasDe2Horas(LocalDate fecha) {
-        // TODO: filter reservaciones where fecha matches and duracion > 2
-        // TODO: print sorted by horaInicio
-
+       
             showReservationsOver2Hours(fecha);
     }
 

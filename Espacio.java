@@ -91,10 +91,6 @@ public class Espacio {
         
     }
 
-    // TODO: hashCode()
-    // Must be consistent with equals()
-    // Hint: use Objects.hash(numeroFila, numeroEspacio, seccion)
-
     @Override
     public int hashCode(){
         return java.util.Objects.hash(numeroFila, numeroEspacio, seccion);

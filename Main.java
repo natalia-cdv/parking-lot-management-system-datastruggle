@@ -186,11 +186,9 @@ public class Main {
 
         switch (opcion) {
             case "a":
-                // TODO: JEZER
                 estacionamiento.mostrarTodasReservacionesSemana();
                 break;
             case "b":
-                // TODO: JEZER
                 int dia  = leerEntero(scanner, "Dia (1-31): " , 1, 31);
                 int mes = leerEntero(scanner, "Mes (1-12): ", 1, 12);
                 int anio = leerEntero(scanner, "Año (YYYY): ", 2026, 2999);
@@ -207,13 +205,11 @@ public class Main {
                 estacionamiento.mostrarReservacionesMasDe2Horas(fechaConsulta);
                 break;
             case "c":
-                // TODO: AIDHAN
                 double min = leerDouble(scanner, "Costo minimo: $", 0, Double.MAX_VALUE);
                 double max = leerDouble(scanner, "Costo maximo: $", min, Double.MAX_VALUE);
                 estacionamiento.mostrarReservacionesPorCosto(min, max);
                 break;
             case "d":
-                // TODO: AIDHAN
                 int d1 = leerEntero(scanner, "Fecha inicio - Dia: ", 1, 31);
                 int m1 = leerEntero(scanner, "Fecha inicio - Mes: ", 1, 12);
                 int a1 = leerEntero(scanner, "Fecha inicio - Año: ", 2026, 2999);
