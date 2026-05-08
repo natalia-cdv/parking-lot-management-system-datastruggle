@@ -1,10 +1,16 @@
-# Java compiled files
+# Ignorar todos los archivos compilados de Java
 *.class
 
-# Project specific ignores
-bin/
+# Ignorar carpetas de compilación (si usas -d out/ como en tu README)
 out/
+bin/
 
-# OS generated files
+# Ignorar archivos de configuración de VS Code
+.vscode/
+.settings/
+.project
+.classpath
+
+# Ignorar archivos temporales del sistema
 .DS_Store
 Thumbs.db
