@@ -216,8 +216,6 @@ public class Estacionamiento {
            historialTransacciones.add(t);
            undoStack.push(t);
 
-
-
            String s = r.getEspacio().getSeccion();
            Queue<Estudiante> q = getWaitlistPorSeccion(s);
 
@@ -227,6 +225,8 @@ public class Estacionamiento {
             System.out.println("Asignando espacio a siguiente en waitlist: " + next.getNumeroEstudiante());
 
             Reservacion nueva = new Reservacion(next, r.getEspacio(), r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), r.getSeccion());
+
+
             
             nueva.calcularCosto();
 
@@ -276,7 +276,7 @@ public class Estacionamiento {
         marcarOcupado(nuevoEspacio);
 
         Reservacion nueva = new Reservacion(r.getEstudiante(), nuevoEspacio, r.getFecha(), r.getHoraInicio(), r.getDuracion(), 0, r.getServiciosAdicionales(), nuevaSeccion);
-
+        
         nueva.calcularCosto();
         nueva.setCostoTotal(nueva.getCostoTotal() + 6.0);
         System.out.println("Cambio de sección. Cargo adicional: $6");
