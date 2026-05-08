@@ -51,6 +51,7 @@ public class Main {
                     int rAnio = leerEntero(scanner, "  Año (2026-2027): ", 2026, 2027);
                     int rMes = leerEntero(scanner, "  Mes (1-12): ", 1, 12);
                     int rDia = leerEntero(scanner, "  Dia (1-31): ", 1, 31);
+
                     LocalDate fecha = null;
                     while (fecha == null) {
                         try {
@@ -65,41 +66,22 @@ public class Main {
                     int horaInicio = leerEntero(scanner, "Hora de inicio (7-17): ", 7, 17);
                     int duracion = leerEntero(scanner, "Duracion en horas (1-8): ", 1, 8);
 
-
-                    // Validaciones
-                    if (horaInicio < 7 || horaInicio > 17) {
-                        System.out.println("Error: Hora invalida. Debe ser entre 7 y 17.");
-                        break;
-                    }
-                    if (duracion < 1 || duracion > 8) {
-                        System.out.println("Error: Duracion invalida. Debe ser entre 1 y 8 horas.");
-                        break;
-                    }
-
                     // 3. Pedir add-ons segun la seccion
                     List<String> servicios = new ArrayList<>();
 
                     if (seccion.equalsIgnoreCase("General")) {
-                        System.out.print("Chequeo de aire de gomas? ($1) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("aire");
-                        System.out.print("Chequeo de fluidos? ($2) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("fluidos");
+                        if (leerSiNo(scanner, "Chequeo de aire de gomas? ($1) (s/n): ")) servicios.add("aire");
+                        if (leerSiNo(scanner, "Chequeo de fluidos? ($2) (s/n): ")) servicios.add("fluidos");
 
                     } else if (seccion.equalsIgnoreCase("VIP")) {
-                        System.out.print("Lavado exterior? ($50) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("lavado");
-                        System.out.print("Chequeo de aire de gomas? ($1) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("aire");
-                        System.out.print("Chequeo de fluidos? ($2) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("fluidos");
-                        System.out.print("Chequeo de frenos y aceite? ($5) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("frenos");
+                        if (leerSiNo(scanner, "Lavado exterior? ($50) (s/n): ")) servicios.add("lavado");
+                        if (leerSiNo(scanner, "Chequeo de aire de gomas? ($1) (s/n): ")) servicios.add("aire");
+                        if (leerSiNo(scanner, "Chequeo de fluidos? ($2) (s/n): ")) servicios.add("fluidos");
+                        if (leerSiNo(scanner, "Chequeo de frenos y aceite? ($5) (s/n): ")) servicios.add("frenos");
 
                     } else if (seccion.equalsIgnoreCase("Electrico")) {
-                        System.out.print("Lavado exterior? ($50) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("lavado");
-                        System.out.print("Chequeo de aire de gomas? ($1) (s/n): ");
-                        if (scanner.nextLine().equalsIgnoreCase("s")) servicios.add("aire");
+                        if (leerSiNo(scanner, "Lavado exterior? ($50) (s/n): ")) servicios.add("lavado");
+                        if (leerSiNo(scanner, "Chequeo de aire de gomas? ($1) (s/n): ")) servicios.add("aire");
                     }
 
                     // 4. Procesar reservacion
@@ -356,6 +338,17 @@ public class Main {
             }
         }
     }
+
+    private static boolean leerSiNo(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("s")) return true;
+            if (input.equals("n")) return false;
+            System.out.println("Error: Por favor ingrese 's' para sí o 'n' para no.");
+        }
+    }
+
 
     /**
      * Prints a divider line for cleaner console output.

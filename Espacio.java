@@ -63,12 +63,9 @@ public class Espacio {
 
      @Override
     public String toString() {
-        return "Espacio{" +
-                "numeroFila=" + numeroFila + 
-                ", numeroEspacio=" + numeroEspacio + 
-                ", seccion='" + seccion + '\'' +
-                ", disponible=" + disponible + 
-                '}';
+        return  "  [ Ubicación Asignada ]" +
+                "\n    Fila: " + numeroFila + " | Espacio: " + numeroEspacio +
+                "\n    Estado: " + (disponible ? "Confirmado" : "Pendiente");
     }
 
 //    Compares two Espacios to see if they're Equal

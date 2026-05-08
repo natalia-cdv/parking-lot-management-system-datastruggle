@@ -56,12 +56,9 @@ public class Auto {
 
     @Override
     public String toString() {
-        return "Auto{" +
-                "tablilla='" + tablilla + '\'' +
-                ", marca='" + marca + '\'' +
-                ", modelo='" + modelo + '\'' +
-                ", año=" + año +
-                '}';
+        return  "    [ Auto ]" +
+                "\n      Tablilla: " + tablilla +
+                "\n      Marca: " + marca + " | Modelo: " + modelo + " (" + año + ")";
     }
     
 

@@ -141,18 +141,17 @@ public class Reservacion {
         costoTotal = (costoHora*duracion) + costoServicios;
         return costoTotal;
     }
-        @Override
+    @Override
     public String toString() {
-        return "Reservacion{" +
-                "estudiante=" + estudiante +
-                ", espacio=" + espacio +
-                ", fecha=" + fecha +
-                ", horaInicio=" + horaInicio +
-                ", duracion=" + duracion +
-                ", costoTotal=" + costoTotal +
-                ", serviciosAdicionales=" + serviciosAdicionales +
-                ", seccion='" + seccion + '\'' +
-                '}';
+        return "\n  [ Datos de la Reservación ]" +
+            "\n  Fecha: " + fecha +
+            "\n  Hora Inicio: " + horaInicio + ":00" +
+            "\n  Duración: " + duracion + " hora(s)" +
+            "\n  Sección: " + seccion.toUpperCase() +
+            "\n  Costo Total: $" + costoTotal +
+            "\n  Servicios: " + serviciosAdicionales +
+            "\n" + estudiante + // Llama al toString de Estudiante
+            "\n" + espacio;     // Llama al toString de Espacio
     }
 
   

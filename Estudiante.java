@@ -71,13 +71,12 @@ public class Estudiante {
     // toString() — readable summary for operator display
     @Override
     public String toString() {
-        return "Estudiante{" +
-                "nombre='" + nombre + '\'' +
-                ", numeroEstudiante='" + numeroEstudiante + '\'' +
-                ", email='" + email + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", auto=" + auto +
-                '}';
+        return  "  [ Estudiante ]" +
+                "\n    Nombre: " + nombre +
+                "\n    ID: " + numeroEstudiante +
+                "\n    Email: " + email +
+                "\n    Tel: " + telefono +
+                "\n" + auto; // Llama al toString de Auto
     }
 
 }
